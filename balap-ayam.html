@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BALAP AYAM — Kuis Bahasa Arab</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Amiri:wght@700&display=swap');
+:root{--green:#28784d;--lime:#a9d957;--cream:#fff8e8;--brown:#81502e;--orange:#ef9c37;--ink:#28352d;--red:#d94b45}
+*{box-sizing:border-box}body{margin:0;background:#eaf2df;color:var(--ink);font-family:Nunito,system-ui,sans-serif;overflow-x:hidden}
+header{height:auto;min-height:82px;background:#fffdf6;border-bottom:4px solid #e5d7b8;display:grid;grid-template-columns:1fr minmax(260px,2fr) 1fr;align-items:center;gap:14px;padding:10px 20px;position:relative;z-index:3}
+.logo{font-weight:1000;font-size:clamp(18px,2.2vw,27px);color:#a34b2f;white-space:nowrap}.logo span{font-size:28px;vertical-align:middle;margin-right:5px}
+.info{justify-self:center;text-align:center;background:#f2f5e9;border:2px solid #d9e4c8;border-radius:14px;padding:8px 18px;font-weight:900;font-size:13px}.badge{display:inline-block;background:#ffd45b;padding:3px 10px;border-radius:99px;margin-left:8px;font-size:11px}
+.controls{display:flex;justify-content:flex-end;gap:7px}.controls button{border:0;border-radius:11px;background:#315f46;color:#fff;padding:10px 12px;font-weight:900;cursor:pointer}
+main{max-width:1400px;margin:auto;padding:14px;display:grid;grid-template-columns:105px 1fr;gap:14px}
+.tracker{background:#fffdf6;border:3px solid #e5d7b8;border-radius:18px;padding:12px 8px;text-align:center;box-shadow:0 5px 0 #d6c6a6;align-self:stretch;z-index:2}
+.tracker h3{font-size:12px;margin:2px 0 12px;color:#9a633b;letter-spacing:2px}
+.bubbles{display:flex;flex-direction:column;align-items:center;gap:8px}.bubble{width:37px;height:37px;border-radius:50%;background:#e8e8dc;border:2px solid #d2d3c6;display:grid;place-items:center;font-weight:1000;font-size:13px;color:#657065}.bubble.done{background:#36a765;color:#fff;border-color:#16854a}
+.stage{position:relative;min-width:0}.subbar{display:flex;justify-content:space-between;padding:0 8px 9px;font-size:12px;font-weight:1000;color:#47624d}.subbar span:last-child{background:#ffd45b;padding:5px 13px;border-radius:99px;color:#795022}
+#game{width:100%;height:min(69vh,690px);min-height:440px;display:block;border:5px solid #fffdf6;border-radius:19px;box-shadow:0 7px 0 #c9d9bd,0 12px 25px #526f4a30;background:#82c8f2;touch-action:pan-y}
+.question{position:absolute;z-index:2;top:44px;left:50%;transform:translateX(-50%);width:min(610px,78%);background:#fffdf2ed;backdrop-filter:blur(7px);border:3px solid #fff;border-radius:20px;padding:16px 19px;box-shadow:0 8px 0 #74522b30,0 10px 30px #314b3930;text-align:center}
+.qhead{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:1000;color:#7a6248}.qhead b:last-child{background:#ffe19a;padding:4px 10px;border-radius:99px;color:#805523}
+.qtext{font-size:clamp(15px,2vw,21px);font-weight:1000;margin:13px 0 14px;line-height:1.35}.answers{display:grid;grid-template-columns:1fr 1fr;gap:9px}.answers button{border:2px solid #e2d7c3;border-radius:12px;background:#fff;padding:11px 9px;font-weight:900;font-size:clamp(12px,1.4vw,15px);color:#35463b;cursor:pointer;min-height:48px;transition:.12s}.answers button:hover{border-color:#6ca66f;background:#f0f8e9;transform:translateY(-2px)}.answers button.correct{background:#35a765;color:#fff;border-color:#18834a}.answers button.wrong{background:#dc554d;color:#fff;border-color:#ad332d;animation:shake .28s linear 2}.answers button:disabled{cursor:default}
+.hint{font-size:11px;color:#927b5e;font-weight:900;margin-top:10px}.bottomleft,.remaining{position:absolute;bottom:15px;z-index:2;background:#fffdf0e8;border:2px solid #fff;border-radius:11px;padding:8px 12px;font-size:11px;font-weight:1000;box-shadow:0 3px 0 #6d543033}.bottomleft{left:15px}.remaining{right:15px;background:#ffdc77;color:#6e4c1e}
+.feedback{min-height:17px;font-size:12px;font-weight:1000;color:#2d8a50;margin-top:6px}
+.overlay{position:fixed;inset:0;background:#17281dcc;z-index:10;display:none;align-items:center;justify-content:center;padding:20px}.modal{background:#fffdf3;border:5px solid #e8d5a7;border-radius:23px;padding:28px;text-align:center;width:min(440px,95vw);box-shadow:0 12px 0 #704b2d}.modal h1{font-size:32px;color:#28784d;margin:4px}.modal p{line-height:1.6}.modal button{background:#28784d;color:#fff;border:0;border-radius:12px;padding:13px 22px;font-weight:1000;font-size:15px;cursor:pointer}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@media(max-width:780px){header{grid-template-columns:1fr auto}.info{grid-column:1/-1;grid-row:2;justify-self:stretch}.controls{grid-column:2;grid-row:1}main{grid-template-columns:64px 1fr;padding:8px;gap:8px}.tracker{padding:9px 3px}.bubble{width:31px;height:31px}.question{width:88%;top:35px;padding:12px}.answers{gap:6px}.answers button{padding:8px 5px;min-height:43px}#game{height:70vh;min-height:500px}.bottomleft,.remaining{bottom:8px}}
+@media(max-width:450px){.controls button{padding:8px;font-size:11px}.logo{font-size:17px}.info{font-size:11px}.qtext{margin:8px 0}.question{top:28px}.answers{grid-template-columns:1fr 1fr}.answers button{font-size:11px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="logo"><span>🐔</span>BALAP AYAM</div>
+ <div class="info" id="courseInfo">MTs Kelas 8 • Bahasa Arab • Fi'il Madhi dan Mudhari' <span class="badge">Campuran</span></div>
+ <div class="controls"><button id="soundBtn" title="Audio">🔊</button><button id="fullBtn" title="Layar penuh">⛶</button><button id="pauseBtn" title="Jeda">Ⅱ</button></div>
+</header>
+<main>
+ <aside class="tracker"><h3>SOAL</h3><div class="bubbles" id="bubbles"></div></aside>
+ <section class="stage">
+  <div class="subbar"><span>Pemain 1 • putih</span><span>LATIHAN</span></div>
+  <div class="question" id="questionCard">
+   <div class="qhead"><b id="qnumber">Soal 1 / 10</b><b id="difficulty">Mudah</b></div>
+   <div class="qtext" id="qtext">Memuat soal...</div>
+   <div class="answers" id="answers"></div>
+   <div class="feedback" id="feedback"></div>
+   <div class="hint">Sentuh jawabanmu!</div>
+  </div>
+  <canvas id="game"></canvas>
+  <div class="bottomleft">📷 BELAKANG</div><div class="remaining" id="remaining">10 soal lagi</div>
+ </section>
+</main>
+<div class="overlay" id="overlay"><div class="modal"><div style="font-size:55px">🏆🐔</div><h1>HEBAT! KAMU MENANG!</h1><p id="resultText">Semua soal berhasil dijawab.</p><button onclick="restart()">Main Lagi</button></div></div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script>
+// ============================================================
+// DATA SOAL — mudah disunting: 10 soal MTs kelas 8
+// ============================================================
+const QUESTIONS = [
+ {difficulty:"Mudah",q:"Kata فَتَحَ termasuk fi'il ...",a:["Madhi (lampau)","Mudhari' (sedang/akan)","Amar (perintah)","Isim (kata benda)"],correct:0,explain:"فَتَحَ berarti 'telah membuka', sehingga termasuk fi'il madhi."},
+ {difficulty:"Mudah",q:"Manakah bentuk fi'il mudhari' dari كَتَبَ ?",a:["يَكْتُبُ","كَاتِبٌ","مَكْتُوبٌ","اُكْتُبْ"],correct:0,explain:"يَكْتُبُ berarti sedang/akan menulis; bentuk mudhari' dari كَتَبَ."},
+ {difficulty:"Mudah",q:"Arti kata ذَهَبَ adalah ...",a:["Telah pergi","Sedang makan","Akan membaca","Telah duduk"],correct:0,explain:"ذَهَبَ adalah fi'il madhi yang berarti telah pergi."},
+ {difficulty:"Sedang",q:"Kata يَقْرَأُ menunjukkan pekerjaan yang ...",a:["Sedang atau akan membaca","Telah membaca","Diperintah membaca","Orang yang membaca"],correct:0,explain:"يَقْرَأُ adalah fi'il mudhari' dari قَرَأَ."},
+ {difficulty:"Sedang",q:"Pasangan fi'il madhi dan mudhari' yang tepat adalah ...",a:["دَرَسَ – يَدْرُسُ","يَذْهَبُ – ذَهَبَتْ","كِتَابٌ – يَكْتُبُ","اِجْلِسْ – جَلَسَ"],correct:0,explain:"دَرَسَ (telah belajar) dan يَدْرُسُ (sedang/akan belajar) merupakan pasangan yang tepat."},
+ {difficulty:"Sedang",q:"Lengkapi kalimat: أَنَا ... الدَّرْسَ كُلَّ يَوْمٍ (Saya belajar pelajaran setiap hari).",a:["أَدْرُسُ","دَرَسْتُ","دَرَسَ","اُدْرُسْ"],correct:0,explain:"Subjek أَنَا dengan kegiatan kebiasaan menggunakan mudhari': أَدْرُسُ."},
+ {difficulty:"Sedang",q:"Bentuk madhi dari يَشْرَبُ adalah ...",a:["شَرِبَ","شَارِبٌ","اِشْرَبْ","مَشْرُوبٌ"],correct:0,explain:"يَشْرَبُ (sedang minum) bentuk madhinya شَرِبَ (telah minum)."},
+ {difficulty:"Sulit",q:"Perhatikan: ذَهَبَ مُحَمَّدٌ إِلَى الْمَدْرَسَةِ. Arti kalimat tersebut adalah ...",a:["Muhammad telah pergi ke sekolah","Muhammad sedang pergi ke sekolah","Muhammad akan pergi ke sekolah","Muhammad diperintah ke sekolah"],correct:0,explain:"ذَهَبَ adalah fi'il madhi; kalimat menyatakan Muhammad telah pergi ke sekolah."},
+ {difficulty:"Sulit",q:"Kalimat yang menggunakan fi'il mudhari' dengan benar untuk 'Mereka (laki-laki) membaca buku' adalah ...",a:["هُمْ يَقْرَؤُونَ الْكِتَابَ","هُمْ قَرَأَ الْكِتَابَ","هُوَ يَقْرَأُونَ الْكِتَابَ","هُمْ اِقْرَأْ الْكِتَابَ"],correct:0,explain:"هُمْ (mereka laki-laki) berpasangan dengan fi'il mudhari' يَقْرَؤُونَ."},
+ {difficulty:"Sulit",q:"Pilih kalimat yang menunjukkan perbedaan waktu lampau dan sekarang: ",a:["أَكَلَ عَلِيٌّ ثُمَّ يَشْرَبُ الْمَاءَ","عَلِيٌّ فِي الْبَيْتِ","هٰذَا كِتَابٌ جَدِيدٌ","اِفْتَحِ الْبَابَ"],correct:0,explain:"أَكَلَ (telah makan) adalah madhi, sedangkan يَشْرَبُ (sedang minum) adalah mudhari'."}
+];
+// Acak posisi pilihan agar jawaban benar tidak selalu berada pada opsi A.
+for (const q of QUESTIONS) {
+ const correctText = q.a[q.correct];
+ for (let i=q.a.length-1;i>0;i--) {
+   const j=Math.floor(Math.random()*(i+1));
+   [q.a[i],q.a[j]]=[q.a[j],q.a[i]];
+ }
+ q.correct=q.a.indexOf(correctText);
+}
+const TOTAL=QUESTIONS.length;
+let current=0,answered=0,paused=false,soundOn=true,startedAt=Date.now(),audioCtx=null, dizzyTimer=null;
+const $=id=>document.getElementById(id);
+function makeTracker(){ $("bubbles").innerHTML=QUESTIONS.map((_,i)=>`<div class="bubble" id="bubble${i}">${i+1}</div>`).join("");}
+function drawQuestion(){
+ const q=QUESTIONS[current];$("qnumber").textContent=`Soal ${current+1} / ${TOTAL}`;$("difficulty").textContent=q.difficulty;$("qtext").textContent=q.q;$("feedback").textContent="";
+ $("answers").innerHTML=q.a.map((a,i)=>`<button onclick="answer(${i},this)">${String.fromCharCode(65+i)}. ${a}</button>`).join("");
+ $("remaining").textContent=`${TOTAL-answered} soal lagi`;
+}
+function beep(freq=500,duration=.13,type="sine",vol=.06){if(!soundOn)return;try{audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();let o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.value=freq;g.gain.value=vol;o.connect(g);g.connect(audioCtx.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);o.stop(audioCtx.currentTime+duration)}catch(e){}}
+function soundCorrect(){beep(660,.12);setTimeout(()=>beep(880,.16),120)}
+function soundWrong(){beep(180,.5,"sawtooth",.045)}
+function answer(index,btn){
+ if(paused)return;
+ const q=QUESTIONS[current],buttons=[...$("answers").children];
+ if(index===q.correct){
+  buttons.forEach(b=>b.disabled=true);btn.classList.add("correct");$("feedback").textContent="✔ Benar! "+q.explain;
+  $("bubble"+current).classList.add("done");$("bubble"+current).textContent="✓";answered++;soundCorrect();chickenRun();
+  setTimeout(()=>{if(answered===TOTAL)win();else{current++;drawQuestion()}},1150);
+ }else{
+  btn.classList.add("wrong");btn.disabled=true;$("feedback").textContent="Belum tepat. Ayam masih pusing! Coba pilihan lain.";
+  soundWrong();chickenDizzy();
+ }
+}
+function win(){chickenVictory();let sec=Math.floor((Date.now()-startedAt)/1000);$("resultText").textContent=`Kamu menjawab ${answered} dari ${TOTAL} soal dengan benar dalam ${Math.floor(sec/60)} menit ${sec%60} detik. Terus semangat belajar Bahasa Arab!`;$("overlay").style.display="flex";for(let i=0;i<5;i++)setTimeout(()=>beep(600+i*100,.2),i*160)}
+function restart(){current=0;answered=0;startedAt=Date.now();$("overlay").style.display="none";makeTracker();drawQuestion();chicken.position.set(0,0,4.5);chicken.rotation.set(0,0,0);}
+$("soundBtn").onclick=()=>{soundOn=!soundOn;$("soundBtn").textContent=soundOn?"🔊":"🔇";if(soundOn)beep(550)};
+$("fullBtn").onclick=()=>{if(!document.fullscreenElement)document.documentElement.requestFullscreen?.();else document.exitFullscreen?.()};
+$("pauseBtn").onclick=()=>{paused=!paused;$("pauseBtn").textContent=paused?"▶":"Ⅱ";$("questionCard").style.opacity=paused?".35":"1";$("questionCard").style.pointerEvents=paused?"none":"auto";if(paused){beep(240,.1)}else beep(500,.1)};
+
+// ============================================================
+// THREE.JS LOW-POLY SCENE
+// ============================================================
+const canvas=$("game"),renderer=new THREE.WebGLRenderer({canvas,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.setClearColor(0x83c9f2);
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x83c9f2);scene.fog=new THREE.Fog(0x83c9f2,24,75);
+const camera=new THREE.PerspectiveCamera(56,1,.1,150);camera.position.set(0,5.8,12.5);camera.lookAt(0,1,-8);
+scene.add(new THREE.HemisphereLight(0xffffff,0x78904e,2));
+const sun=new THREE.DirectionalLight(0xfff4d6,2.4);sun.position.set(-8,15,8);sun.castShadow=true;scene.add(sun);
+const mat=(color,roughness=1)=>new THREE.MeshStandardMaterial({color,roughness});
+const grass=mat(0x68aa4d),trackmat=mat(0x96613b),lineMat=mat(0xfff4d6),wood=mat(0x9a6338),white=mat(0xf7f3e8),red=mat(0xc9483d),yellow=mat(0xf4c642),dark=mat(0x49372d),black=mat(0x292b29);
+function box(w,h,d,m,x,y,z,parent=scene){let o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o}
+box(200,.3,200,grass,0,-.38,-40);
+box(7,.25,70,trackmat,0,-.18,-27);
+for(let z=5;z>-62;z-=3.2){box(.12,.025,1.25,lineMat,0,-.04,z)}
+// fences
+for(let side of [-1,1]){box(.18,.8,70,wood,side*4,-.02,-27);for(let z=6;z>-62;z-=3){box(.18,.8,.18,wood,side*4,.43,z);box(.2,.18,3,wood,side*3.9,.2,z-1.4)}}
+function tree(x,z,s=1){let g=new THREE.Group();g.position.set(x,0,z);scene.add(g);let trunk=new THREE.Mesh(new THREE.CylinderGeometry(.18,.28,1.3,5),wood);trunk.position.y=.55;g.add(trunk);let crown=new THREE.Mesh(new THREE.ConeGeometry(1.05,2.2,5),mat(0x36854a));crown.position.y=2.15;g.add(crown);let crown2=new THREE.Mesh(new THREE.ConeGeometry(.75,1.5,5),mat(0x4e9b52));crown2.position.y=2.9;g.add(crown2);g.scale.setScalar(s)}
+for(let i=0;i<22;i++){let z=5-(i*3.1);tree(-6-(i%3)*1.5,z,.8+(i%3)*.15);tree(6+(i%4)*1.1,z-1,.8+(i%2)*.25)}
+// barn left, hay bales
+box(3,2.3,3,red,-8,1.1,-7);let roof=box(3.5,.35,3.5,mat(0x653c32),-8,2.45,-7);roof.rotation.z=.35;box(.9,1.3,.12,wood,-8,.65,-5.45);
+for(let i=0;i<5;i++){let h=box(1.25,1.05,1.1,yellow,7+i%2*1.1,.48,-12-Math.floor(i/2)*4);h.rotation.y=.3}
+function cloud(x,y,z){for(let [a,b,c,s] of [[0,0,0,1.2],[1,.2,0,.85],[-1,.1,0,.8],[.3,.6,0,.8]])box(s,s*.65,s*.7,white,x+a,y+b,z+c)}
+for(let i=0;i<12;i++)cloud((i%2?1:-1)*(7+(i%4)*4),7+(i%3)*1.5,-i*5-5);
+// distant hills
+for(let i=0;i<12;i++){let hill=new THREE.Mesh(new THREE.SphereGeometry(4,7,5),mat(i%2?0x7cb85b:0x8bc56a));hill.scale.set(1,.35,.5);hill.position.set(-18+i*3.4,-.2,-32-(i%3)*3);scene.add(hill)}
+// finish structure far down track
+const finishZ=-57;
+for(let i=0;i<9;i++){box(.38,.38,.18,i%2?white:black,-1.65+i*.41,2.8,finishZ);box(.38,.38,.18,i%2?black:white,-1.65+i*.41,2.42,finishZ)}
+box(.12,3.6,.12,wood,-1.9,1.7,finishZ);box(.12,3.6,.12,wood,1.9,1.7,finishZ);
+box(4,.25,.18,red,0,3.55,finishZ);
+const finishText=document.createElement("canvas");finishText.width=512;finishText.height=128;let ctx=finishText.getContext("2d");ctx.fillStyle="#fff5d8";ctx.fillRect(0,0,512,128);ctx.fillStyle="#202020";ctx.font="bold 78px Arial";ctx.textAlign="center";ctx.fillText("FINISH",256,91);let tex=new THREE.CanvasTexture(finishText);let sign=new THREE.Mesh(new THREE.PlaneGeometry(4,1),new THREE.MeshBasicMaterial({map:tex}));sign.position.set(0,3.2,finishZ+.12);scene.add(sign);
+// Chicken low poly model
+const chicken=new THREE.Group();scene.add(chicken);chicken.position.set(0,0,4.5);
+const body=new THREE.Mesh(new THREE.IcosahedronGeometry(.68,1),white);body.scale.set(.9,1.05,1.2);body.position.y=1.05;body.castShadow=true;chicken.add(body);
+const head=new THREE.Mesh(new THREE.IcosahedronGeometry(.42,1),white);head.position.set(0,1.8,-.42);head.castShadow=true;chicken.add(head);
+const beak=new THREE.Mesh(new THREE.ConeGeometry(.18,.42,4),yellow);beak.rotation.x=Math.PI/2;beak.rotation.z=Math.PI/2;beak.position.set(0,1.73,-.88);chicken.add(beak);
+const comb=new THREE.Group();chicken.add(comb);for(let i=0;i<3;i++){let c=new THREE.Mesh(new THREE.SphereGeometry(.13,5,4),red);c.scale.set(.7,1.3,.7);c.position.set((i-1)*.16,2.2,-.42);comb.add(c)}
+for(let side of [-1,1]){let eye=new THREE.Mesh(new THREE.SphereGeometry(.055,8,6),black);eye.position.set(side*.27,1.88,-.75);chicken.add(eye);let leg=box(.12,.55,.12,yellow,side*.28,.35,-.02,chicken);leg.rotation.x=.15;let foot=box(.18,.1,.35,yellow,side*.28,.08,-.18,chicken)}
+for(let i=0;i<3;i++){let f=new THREE.Mesh(new THREE.ConeGeometry(.12,.55,4),white);f.position.set((i-1)*.18,1.1,.8);f.rotation.x=Math.PI;chicken.add(f)}
+// stars above chicken while dizzy
+const stars=new THREE.Group();scene.add(stars);stars.visible=false;for(let i=0;i<3;i++){let st=new THREE.Mesh(new THREE.OctahedronGeometry(.16),yellow);st.position.set(Math.cos(i*2.1)*.75,2.55,Math.sin(i*2.1)*.4);stars.add(st)}
+let runUntil=0,dizzyUntil=0,victory=false;
+function chickenRun(){runUntil=performance.now()+1000;const stepDistance=(4.5-finishZ)/TOTAL;chicken.position.z=Math.max(finishZ,chicken.position.z-stepDistance);chicken.position.y=.3;setTimeout(()=>chicken.position.y=0,350);beep(380,.08)}
+function chickenDizzy(){dizzyUntil=performance.now()+1500;stars.visible=true}
+function chickenVictory(){victory=true;chicken.position.z=finishZ-1.2;chicken.position.y=1.2;}
+// Resize
+function resize(){const r=canvas.getBoundingClientRect();renderer.setSize(r.width,r.height,false);camera.aspect=r.width/r.height;camera.updateProjectionMatrix()}
+new ResizeObserver(resize).observe(canvas);resize();
+let clock=new THREE.Clock();
+function animate(){requestAnimationFrame(animate);let t=clock.getElapsedTime(),now=performance.now();
+ if(!paused){
+  if(now<dizzyUntil){chicken.rotation.z=Math.sin(t*18)*.35;stars.visible=true;stars.rotation.y+=.08;stars.position.set(chicken.position.x,chicken.position.y+2.5,chicken.position.z)}
+  else{chicken.rotation.z=THREE.MathUtils.lerp(chicken.rotation.z,0,.12);stars.visible=false}
+  if(now<runUntil){chicken.rotation.x=Math.sin(t*18)*.12;chicken.position.y=.1+Math.abs(Math.sin(t*12))*.18}
+  else if(!victory&&now>=runUntil){chicken.rotation.x=THREE.MathUtils.lerp(chicken.rotation.x,0,.1);chicken.position.y=THREE.MathUtils.lerp(chicken.position.y,0,.1)}
+  if(victory){chicken.position.y=1+Math.abs(Math.sin(t*5))*.9;chicken.rotation.z=Math.sin(t*5)*.08}
+ }
+ camera.position.x=THREE.MathUtils.lerp(camera.position.x,chicken.position.x,.035);camera.position.z=chicken.position.z+8.5;camera.position.y=5.8;camera.lookAt(0,1.1,chicken.position.z-9);
+ renderer.render(scene,camera)}
+animate();makeTracker();drawQuestion();
+</script>
+</body></html>
